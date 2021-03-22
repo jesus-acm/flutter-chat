@@ -1,4 +1,5 @@
 import 'package:chat/helpers/mostrar_alerta.dart';
+import 'package:chat/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -57,6 +58,8 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final socketService = Provider.of<SocketService>(context);
+
     
     return Container(
       margin: EdgeInsets.only(top: 40),
@@ -82,12 +85,13 @@ class __FormState extends State<_Form> {
             textController: passCtrl,
           ),
           
-          BotonAzul(text: 'Ingresar', onPressed: authService.autenticando ? null : () async{
+          BotonAzul(text: 'Crear cuenta', onPressed: authService.autenticando ? null : () async{
             FocusScope.of(context).unfocus();
-            final registerOk = await authService.register(nameCtrl.text, emailCtrl.text.trim(), passCtrl.text.trim());
+            final registerOk = await authService.register(nameCtrl.text.trim(), emailCtrl.text.trim(), passCtrl.text.trim());
 
             if(registerOk == true){
               //Navegar a otra pagina
+              socketService.connect();
               Navigator.pushReplacementNamed(context, 'usuarios');
             }else{
               //Mostrar alerta
